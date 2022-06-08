@@ -1,0 +1,31 @@
+.home-container {
+  *[class$="-txt"] {
+    color: var(--txt-color);
+  }
+  .welcome-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    gap: 10px;
+    span {
+      display: block;
+      text-shadow: 0 0 10px #2196f3;
+      &.welcome-txt {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+      &.name-txt {
+        font-size: 2rem;
+        font-weight: bold;
+        text-shadow: 0 0 10px #2196f3, 0 0 20px #2da2ff;
+      }
+      &.major-txt {
+        font-size: 1rem;
+      }
+    }
+  }
+}

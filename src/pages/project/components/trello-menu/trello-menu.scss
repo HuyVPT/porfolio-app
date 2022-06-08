@@ -1,0 +1,71 @@
+.trello-menu-container {
+  width: 0px;
+  height: 100%;
+  min-height: 100vh;
+  background-color: var(--contract-color);
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.5s ease-in-out;
+  &.opened{
+    width: 450px;
+  }
+}
+.toggle-btn {
+  height: 40px;
+  width: 40px;
+  background-color: var(--contract-color);
+  position: absolute;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  cursor: pointer;
+  .icon-wrapper {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    &:hover {
+      background-color: #ffffff66;
+      backdrop-filter: blur(10px);
+    }
+    span {
+      position: absolute;
+      display: block;
+      width: 22px;
+      height: 2px;
+      background-color: var(--bg-color-primary);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: 0.25s;
+      &:nth-child(1) {
+        top: 14px;
+      }
+      &:nth-child(2) {
+        top: 20px;
+      }
+      &:nth-child(3) {
+        top: 26px;
+      }
+    }
+  }
+  &.toggled .icon-wrapper {
+    span:nth-child(1) {
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      transition: 0.25s;
+      transition-delay: 0.15s;
+    }
+    span:nth-child(2) {
+      left: 62px;
+      transition: 0.25s;
+    }
+    span:nth-child(3) {
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      transition: 0.25s;
+      transition-delay: 0.15s;
+    }
+  }
+}
