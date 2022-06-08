@@ -2,12 +2,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: sticky;
   width: 400px;
   height: 60px;
   background-color: var(--contract-color);
   left: 50%;
-  bottom: 10px;
+  top: calc(100vh - 72px);
   transform: translateX(-50%);
   border-radius: 10px;
   z-index: 999;
