@@ -1,37 +1,37 @@
 import { useEffect, useRef, useState } from "react";
-import { PersonOutline, Location, Call, Mail, Earth } from "react-ionicons";
+import Icon from "../../components/icon/icon";
 import "./profile.scss";
 
 const contactInfo = [
   {
     title: "address",
-    icon: <Location title="address" />,
+    icon: <Icon type="fas" name="location-dot" />,
     text: "00 Street District State",
   },
   {
     title: "Phone",
-    icon: <Call title="Phone" />,
+    icon: <Icon type="fas" name="phone" />,
     text: "(+xx)xx xxxx xxx",
   },
   {
     title: "Mail",
-    icon: <Mail title="Mail" />,
+    icon: <Icon name="envelope" />,
     text: "your-email@example.com",
   },
   {
     title: "Earth",
-    icon: <Earth title="Earth" />,
+    icon: <Icon type="fas" name="earth-asia" />,
     text: "https//:yourwebsite.com.vn",
   },
 ];
 
 function Profile() {
   const [avatarSrc] = useState("");
-  const avatarRef = useRef();
+  const avatarRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    (
-      avatarRef.current as HTMLElement
-    ).style.backgroundImage = `url(${avatarSrc})`;
+    if (!avatarRef.current) return;
+    const avatarEl: HTMLElement = avatarRef.current as HTMLElement;
+    avatarEl.style.backgroundImage = `url(${avatarSrc})`;
   }, [avatarSrc]);
   return (
     <div className="profile-container">
@@ -39,7 +39,7 @@ function Profile() {
         <div className="left-content">
           <div className="wrapper-avatar">
             <div className="avatar" ref={avatarRef}>
-              {!avatarSrc && <PersonOutline color={"#00000066"} title={""} />}
+              {!avatarSrc && <Icon name="user" />}
             </div>
           </div>
           <div className="section wrapper-contact">
@@ -47,7 +47,9 @@ function Profile() {
             <ul className="contact">
               {contactInfo.map((item, index) => (
                 <li key={`contact-${index}`} className="contact-item">
-                  <span className="contact-item-icon">{item.icon}</span>
+                  <span className="contact-item-icon">
+                    <span>{item.icon}</span>
+                  </span>
                   <span className="contact-item-text">{item.text}</span>
                 </li>
               ))}

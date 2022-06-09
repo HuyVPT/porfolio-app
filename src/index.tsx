@@ -10,7 +10,7 @@ import Project from "./pages/project/project";
 import Photo from "./pages/photo/photo";
 import Setting from "./pages/setting/setting";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <BrowserRouter>
     <React.StrictMode></React.StrictMode>

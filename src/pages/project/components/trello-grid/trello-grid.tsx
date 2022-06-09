@@ -1,66 +1,35 @@
 import { useState } from "react";
+import TrelloItem from "../../../../models/trello-item";
 import TrelloBar from "../trello-bar/trello-bar";
 import "./trello-grid.scss";
 
-const barItems = [
+const barItems: TrelloItem[] = [
   {
-    id: 1,
+    id: "1",
     header: "Title",
     discription:
       "item discription, item discription, item discription, item discription, item discription, item discription,",
   },
   {
-    id: 2,
+    id: "2",
     header: "Title",
     discription:
       "item discription, item discription, item discription, item discription, item discription, item discription,",
   },
   {
-    id: 3,
+    id: "3",
     header: "Title",
     discription:
       "item discription, item discription, item discription, item discription, item discription, item discription,",
   },
   {
-    id: 4,
+    id: "4",
     header: "Title",
     discription:
       "item discription, item discription, item discription, item discription, item discription, item discription,",
   },
   {
-    id: 5,
-    header: "Title",
-    discription:
-      "item discription, item discription, item discription, item discription, item discription, item discription,",
-  },
-];
-const doingItems = [
-  {
-    id: 6,
-    header: "Title",
-    discription:
-      "item discription, item discription, item discription, item discription, item discription, item discription,",
-  },
-  {
-    id: 7,
-    header: "Title",
-    discription:
-      "item discription, item discription, item discription, item discription, item discription, item discription,",
-  },
-  {
-    id: 8,
-    header: "Title",
-    discription:
-      "item discription, item discription, item discription, item discription, item discription, item discription,",
-  },
-  {
-    id: 9,
-    header: "Title",
-    discription:
-      "item discription, item discription, item discription, item discription, item discription, item discription,",
-  },
-  {
-    id: 10,
+    id: "5",
     header: "Title",
     discription:
       "item discription, item discription, item discription, item discription, item discription, item discription,",
@@ -69,7 +38,7 @@ const doingItems = [
 
 function TrelloGrid() {
   const [items, setItems] = useState(barItems);
-  const [draggedItem, setDraggedItem] = useState(null);
+  const [draggedItem, setDraggedItem] = useState<TrelloItem | null>(null);
 
   return (
     <>
@@ -77,17 +46,10 @@ function TrelloGrid() {
         <TrelloBar
           title="Todo"
           items={items}
-          draggedItem={draggedItem}
+          draggedItem={draggedItem as TrelloItem}
           setBarItems={setItems}
-          setDraggedItem={(item) => setDraggedItem(item)}
+          setDraggedItem={(item: TrelloItem | null) => setDraggedItem(item)}
         />
-        {/* <TrelloBar
-          title="Doing"
-          items={item1s}
-          draggedItem={draggedItem}
-          setBarItems={setItem1s}
-          setDraggedItem={(item) => setDraggedItem(item)}
-        /> */}
       </div>
     </>
   );

@@ -6,29 +6,22 @@ interface CubeProps {
   color?: string;
 }
 function Cube(props: CubeProps) {
-  const cubeRef = useRef();
+  const cubeRef = useRef(null);
   useEffect(() => {
+    if (!cubeRef.current) return;
+    const cubeEl = cubeRef.current as HTMLElement;
     if (props.position) {
-      (cubeRef.current as HTMLElement).style.left = `${props.position.x}%`;
-      (cubeRef.current as HTMLElement).style.top = `${props.position.y}%`;
+      cubeEl.style.left = `${props.position.x}%`;
+      cubeEl.style.top = `${props.position.y}%`;
     }
     if (props.size) {
-      (cubeRef.current as HTMLElement).style.setProperty(
-        "--height",
-        `${props.size}px`
-      );
-      (cubeRef.current as HTMLElement).style.setProperty(
-        "--width",
-        `${props.size}px`
-      );
+      cubeEl.style.setProperty("--height", `${props.size}px`);
+      cubeEl.style.setProperty("--width", `${props.size}px`);
     }
     if (props.color) {
-      (cubeRef.current as HTMLElement).style.setProperty(
-        "--color",
-        `${props.color}`
-      );
+      cubeEl.style.setProperty("--color", `${props.color}`);
     }
-  }, []);
+  }, [props.position, props.size, props.color]);
   return (
     <div className="wrapper-cube" ref={cubeRef}>
       <div className="cube">

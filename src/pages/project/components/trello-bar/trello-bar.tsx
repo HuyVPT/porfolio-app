@@ -1,13 +1,32 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import TrelloItem from "../../../../models/trello-item";
 import "./trello-bar.scss";
 
-function TrelloBar({ title, items, setBarItems, draggedItem, setDraggedItem }) {
-  const barItemsRef = useRef();
-  const onDrop = ({ target }) => {
+interface TrelloBarProps {
+  title: string;
+  items: TrelloItem[];
+  draggedItem: TrelloItem;
+  setBarItems: (arr: TrelloItem[]) => void;
+  setDraggedItem: (item: TrelloItem | null) => void;
+}
+
+function TrelloBar({
+  title,
+  items,
+  setBarItems,
+  draggedItem,
+  setDraggedItem,
+}: TrelloBarProps) {
+  const barItemsRef = useRef<HTMLUListElement | null>(null);
+  const onDrop = (e: any) => {
+    console.log(e);
     const orgIndex = (items as any[]).findIndex(
       (item) => item.id === draggedItem.id
     );
-    const dropIndex = getDropIndex((target as HTMLElement).closest("li"));
+    const closestLi: HTMLLIElement = (e.target as HTMLElement).closest(
+      "li"
+    ) as HTMLLIElement;
+    const dropIndex = getDropIndex(closestLi);
     console.log("orgIndex", orgIndex);
     console.log("dropIndex", dropIndex);
     const newArray = [...items];
@@ -19,7 +38,7 @@ function TrelloBar({ title, items, setBarItems, draggedItem, setDraggedItem }) {
     setBarItems(newArray);
   };
 
-  const getDropIndex = (dropAtItem: HTMLElement) => {
+  const getDropIndex = (dropAtItem: HTMLLIElement) => {
     let lastDropIndex: number = -1;
     if (!dropAtItem) {
       return lastDropIndex;
@@ -37,7 +56,9 @@ function TrelloBar({ title, items, setBarItems, draggedItem, setDraggedItem }) {
       <div className="trello-bar">
         <div className="bar-title">
           {title}
-          <button className="btn-bar-menu" type="button"><span>...</span></button>
+          <button className="btn-bar-menu" type="button">
+            <span>...</span>
+          </button>
         </div>
         <ul
           ref={barItemsRef}
@@ -46,7 +67,7 @@ function TrelloBar({ title, items, setBarItems, draggedItem, setDraggedItem }) {
           onDragOver={(e) => e.preventDefault()}
         >
           {items &&
-            items.map((item: any, index: number) => (
+            items.map((item: TrelloItem, index: number) => (
               <li key={"bar-item-" + index}>
                 <div
                   className="item-content"

@@ -24,7 +24,7 @@
         a {
           .icon {
             background-color: var(--nav-active-clr);
-            color: #fff;
+            color: var(--contract-color);
             transform: translateY(-28px);
             transition-delay: 0.15s;
             &::before {
@@ -74,6 +74,7 @@
             opacity: 0;
             transition: 0.5s;
             transition-delay: 0s;
+            z-index: -1;
           }
         }
         .label {

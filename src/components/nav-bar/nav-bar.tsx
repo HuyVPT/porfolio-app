@@ -1,14 +1,8 @@
 import "./nav-bar.scss";
-import {
-  CameraOutline,
-  HomeOutline,
-  PersonOutline,
-  ServerOutline,
-  SettingsOutline,
-} from "react-ionicons";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeContext from "../../theme/theme";
+import Icon from "../icon/icon";
 const activeColor: { [key: string]: string } = {
   home: "#f44336",
   profile: "#ffa117",
@@ -19,9 +13,7 @@ const activeColor: { [key: string]: string } = {
 const navBarProvider = [
   {
     id: 0,
-    icon: (
-      <HomeOutline color={"#00000"} title={""} height="20px" width="20px" />
-    ),
+    icon: <Icon type="fas" name="house" />,
     isActive: true,
     activeColor: activeColor.home,
     path: "/home",
@@ -29,9 +21,7 @@ const navBarProvider = [
   },
   {
     id: 1,
-    icon: (
-      <PersonOutline color={"#00000"} title={""} height="20px" width="20px" />
-    ),
+    icon: <Icon type="fas" name="user" />,
     isActive: false,
     activeColor: activeColor.profile,
     path: "/profile",
@@ -39,9 +29,7 @@ const navBarProvider = [
   },
   {
     id: 2,
-    icon: (
-      <ServerOutline color={"#00000"} title={""} height="20px" width="20px" />
-    ),
+    icon: <Icon type="fas" name="database" />,
     isActive: false,
     activeColor: activeColor.contact,
     path: "project",
@@ -49,9 +37,7 @@ const navBarProvider = [
   },
   {
     id: 3,
-    icon: (
-      <CameraOutline color={"#00000"} title={""} height="20px" width="20px" />
-    ),
+    icon: <Icon type="fas" name="camera-retro" />,
     isActive: false,
     activeColor: activeColor.photo,
     path: "photo",
@@ -59,9 +45,7 @@ const navBarProvider = [
   },
   {
     id: 4,
-    icon: (
-      <SettingsOutline color={"#00000"} title={""} height="20px" width="20px" />
-    ),
+    icon: <Icon type="fas" name="gear" />,
     isActive: false,
     activeColor: activeColor.setting,
     path: "setting",
