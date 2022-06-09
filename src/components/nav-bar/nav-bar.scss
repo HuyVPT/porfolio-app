@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: sticky;
+  position: fixed;
   width: 400px;
   height: 60px;
   background-color: var(--contract-color);
@@ -24,9 +24,9 @@
         a {
           .icon {
             background-color: var(--nav-active-clr);
-            color: var(--contract-color);
+            color: #fff;
             transform: translateY(-28px);
-            transition-delay: 0.15s;
+            transition-delay: transform 0.15s;
             &::before {
               opacity: 0.5;
               transition-delay: 0.25s;
@@ -59,7 +59,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: 0.5s;
+          transition: transform 0.5s;
           transition-delay: 0s;
           &::before {
             content: "";
@@ -84,7 +84,7 @@
           left: 50%;
           transform: translateX(-50%);
           opacity: 0;
-          transition: 0.5s;
+          transition: transform 0.5s, opacity 0.5s;
           transition-delay: 0.2s;
         }
       }

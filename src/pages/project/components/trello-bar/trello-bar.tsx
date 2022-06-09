@@ -1,5 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import Icon from "../../../../components/icon/icon";
+import InputField from "../../../../components/input-field/input-field";
+import Modal from "../../../../components/modal/modal";
+import TextAreaField from "../../../../components/textarea/text-area";
 import TrelloItem from "../../../../models/trello-item";
+import * as Validators from "../../../../validators";
 import "./trello-bar.scss";
 
 interface TrelloBarProps {
@@ -9,7 +14,6 @@ interface TrelloBarProps {
   setBarItems: (arr: TrelloItem[]) => void;
   setDraggedItem: (item: TrelloItem | null) => void;
 }
-
 function TrelloBar({
   title,
   items,
@@ -17,7 +21,12 @@ function TrelloBar({
   draggedItem,
   setDraggedItem,
 }: TrelloBarProps) {
+  const [createModal, setCreateModal] = useState(false);
+  const [cardTitle, setCardTitle] = useState("");
+
   const barItemsRef = useRef<HTMLUListElement | null>(null);
+  const cardTitleRef = useRef<any>(null);
+
   const onDrop = (e: any) => {
     console.log(e);
     const orgIndex = (items as any[]).findIndex(
@@ -51,38 +60,99 @@ function TrelloBar({
     return lastDropIndex;
   };
 
+  const onSubmitHandler = () => {};
+
   return (
-    <div className="trello-column">
-      <div className="trello-bar">
-        <div className="bar-title">
-          {title}
-          <button className="btn-bar-menu" type="button">
-            <span>...</span>
-          </button>
+    <>
+      <div className="trello-column">
+        <div className="trello-bar">
+          <div className="bar-title">
+            {title}
+            <button className="btn-bar-menu" type="button">
+              <span>...</span>
+            </button>
+          </div>
+          <ul
+            ref={barItemsRef}
+            className="bar-items"
+            onDrop={(e) => onDrop(e)}
+            onDragOver={(e) => e.preventDefault()}
+          >
+            {items &&
+              items.map((item: TrelloItem, index: number) => (
+                <li key={"bar-item-" + index}>
+                  <div
+                    className="item-content"
+                    draggable="true"
+                    onDragStart={() => setDraggedItem(item)}
+                    onDragEnd={() => setDraggedItem(null)}
+                  >
+                    <div className="item-header">{item.header + item.id}</div>
+                    <div className="item-discription">{item.discription}</div>
+                  </div>
+                </li>
+              ))}
+            <li
+              className="open-item-container"
+              onClick={() => {
+                console.log("setCreateModal(true)");
+                setCreateModal(true);
+              }}
+            >
+              <div className="open-item">
+                <Icon type="fas" name="plus" /> New card
+              </div>
+            </li>
+          </ul>
         </div>
-        <ul
-          ref={barItemsRef}
-          className="bar-items"
-          onDrop={(e) => onDrop(e)}
-          onDragOver={(e) => e.preventDefault()}
-        >
-          {items &&
-            items.map((item: TrelloItem, index: number) => (
-              <li key={"bar-item-" + index}>
-                <div
-                  className="item-content"
-                  draggable="true"
-                  onDragStart={() => setDraggedItem(item)}
-                  onDragEnd={() => setDraggedItem(null)}
-                >
-                  <div className="item-header">{item.header + item.id}</div>
-                  <div className="item-discription">{item.discription}</div>
-                </div>
-              </li>
-            ))}
-        </ul>
       </div>
-    </div>
+      <Modal
+        header="Create Card"
+        display={createModal}
+        onClose={() => {
+          setCreateModal(false);
+        }}
+      >
+        <form id="create-new-card-form" onSubmit={onSubmitHandler}>
+          <InputField
+            ref={cardTitleRef}
+            id="card-title"
+            label="Title"
+            name="cardTitle"
+            value={cardTitle}
+            formId="create-new-card-form"
+            required={true}
+            validate={Validators.required}
+            onChange={(e) => setCardTitle(e)}
+            onError={(e) => {
+              console.log(e);
+            }}
+          />
+          <TextAreaField
+            id="card-discription"
+            label="Discription"
+            name="cardDiscription"
+            value=""
+            required={true}
+            formId="create-new-card-form"
+            onChange={(e) => {
+              console.log(e);
+            }}
+            onError={(e) => {
+              console.log(e);
+            }}
+          />
+          <div className="btn-group">
+            <button>Cancel</button>
+            <button
+              disabled={cardTitleRef.current && cardTitleRef.current.inValid}
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }
 

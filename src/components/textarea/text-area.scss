@@ -1,0 +1,30 @@
+.input-field-container {
+  padding: 4px 16px;
+  height: max-content;
+  display: flex;
+  label {
+    flex-basis: 10%;
+    min-width: 80px;
+    margin-right: 8px;
+    display: inline-block;
+    color: #222327;
+  }
+  textarea {
+    flex-basis: 80%;
+    border: unset;
+    outline: 1px solid #222327;
+    min-width: 300px;
+    min-height: 150px;
+    border-radius: 0px;
+    padding: 4px;
+    &.invalid {
+      outline-color: red;
+      background-color: #ff000010;
+    }
+  }
+
+  svg {
+    font-size: 10px;
+    margin-left: 4px;
+  }
+}

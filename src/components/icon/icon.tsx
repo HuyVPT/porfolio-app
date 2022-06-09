@@ -14,8 +14,11 @@ import {
   faUser as faUserSolid,
   faCameraRetro,
   faGear,
+  faPlus,
+  faAsterisk,
 } from "@fortawesome/free-solid-svg-icons";
-library.add(
+
+const iconsDeclaration = [
   faUser,
   faUserSolid,
   faHouse,
@@ -25,8 +28,12 @@ library.add(
   faEarthAsia,
   faDatabase,
   faCameraRetro,
-  faGear
-);
+  faGear,
+  faPlus,
+  faAsterisk,
+];
+
+library.add(...iconsDeclaration);
 
 interface IconProps {
   type?: string;
