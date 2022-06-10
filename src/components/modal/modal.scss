@@ -43,6 +43,7 @@
     width: 16px;
     top: 50%;
     right: 8px;
+    font-size: 1rem;
     transform: translateY(-50%);
     border: none;
     background-color: transparent;
@@ -58,7 +59,7 @@
     &:hover {
       cursor: pointer;
       background-color: #00000033;
-      border: 1px solid #00000099;
+      outline: 1px solid #00000099;
     }
   }
 }

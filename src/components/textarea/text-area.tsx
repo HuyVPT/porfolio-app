@@ -1,7 +1,13 @@
-import { ChangeEvent, useEffect, useRef } from "react";
-import FormError from "../../models/error-message";
-import { setErrorState } from "../../validators";
-import Icon from "../icon/icon";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import FormError from "@/models/error-message";
+import * as Validators from "@/validators";
+import Icon from "@/components/icon/icon";
 import "./text-area.scss";
 
 interface TextAreaProps {
@@ -18,25 +24,29 @@ interface TextAreaProps {
   resizeAble?: boolean;
   width?: number;
   height?: number;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   onError?: (error: FormError) => void;
   validate?: (value: string) => FormError;
 }
 
-function TextAreaField(props: TextAreaProps) {
+function TextAreaField(props: TextAreaProps, ref: any) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [inValid, setInValid] = useState(
+    props.validate && !!props.validate(props.value as string)
+  );
+  const [value, setValue] = useState<string>(props.value as string);
 
-  const valueChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const controlValue: string = e.target.value;
-    if (props.validate) {
-      const fieldError: FormError | null = props.validate(controlValue);
-      setErrorState(textAreaRef.current as HTMLElement, !!fieldError);
-      if (props.onError && fieldError) {
-        props.onError(fieldError);
-      }
-    }
-    props.onChange(controlValue);
-  };
+  useImperativeHandle(ref, () => ({
+    isValid() {
+      return !inValid;
+    },
+    focus() {
+      textAreaRef.current && (textAreaRef.current as HTMLElement).focus();
+    },
+    getInputValue() {
+      return value;
+    },
+  }));
 
   useEffect(() => {
     const textAreaEl = textAreaRef.current as HTMLTextAreaElement;
@@ -50,9 +60,24 @@ function TextAreaField(props: TextAreaProps) {
       textAreaEl.style.height = `${props.height}px`;
     }
   }, [props.resizeAble, props.width, props.height]);
+  const valueChangeHandler = (controlValue: string) => {
+    if (props.validate) {
+      const fieldError: FormError | null = props.validate(controlValue);
+      Validators.setErrorState(
+        textAreaRef.current as HTMLElement,
+        !!fieldError
+      );
+      setInValid(!!fieldError);
+      if (props.onError && fieldError) {
+        props.onError(fieldError);
+      }
+    }
+    setValue(controlValue);
+  };
+
   return (
     <>
-      <div className={"input-field-container " + (props.className || "")}>
+      <div className={"text-area-container " + (props.className || "")}>
         <label htmlFor={props.id}>{props.label}</label>
         <textarea
           ref={textAreaRef}
@@ -60,10 +85,10 @@ function TextAreaField(props: TextAreaProps) {
           id={props.id}
           maxLength={props.maxlength}
           placeholder={props.placeholder || ""}
-          value={props.value as string}
+          value={value}
           readOnly={props.readonly}
           form={props.formId || ""}
-          onChange={valueChangeHandler}
+          onChange={(e) => valueChangeHandler(e.target.value)}
         />
         {props.required && <Icon type="fas" name="asterisk" />}
       </div>
@@ -71,4 +96,4 @@ function TextAreaField(props: TextAreaProps) {
   );
 }
 
-export default TextAreaField;
+export default forwardRef(TextAreaField);

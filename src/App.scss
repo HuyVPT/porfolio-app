@@ -54,3 +54,7 @@
     z-index: 1;
   }
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}

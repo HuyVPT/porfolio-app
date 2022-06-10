@@ -3,48 +3,40 @@ import Icon from "../../../../components/icon/icon";
 import InputField from "../../../../components/input-field/input-field";
 import Modal from "../../../../components/modal/modal";
 import TextAreaField from "../../../../components/textarea/text-area";
-import TrelloItem from "../../../../models/trello-item";
+import { ITrelloBar, ITrelloItem } from "../../../../models/trello";
 import * as Validators from "../../../../validators";
 import "./trello-bar.scss";
 
 interface TrelloBarProps {
-  title: string;
-  items: TrelloItem[];
-  draggedItem: TrelloItem;
-  setBarItems: (arr: TrelloItem[]) => void;
-  setDraggedItem: (item: TrelloItem | null) => void;
+  data: ITrelloBar;
+  draggedItem: ITrelloItem;
+  setDraggedItem: (item: ITrelloItem | null) => void;
 }
-function TrelloBar({
-  title,
-  items,
-  setBarItems,
-  draggedItem,
-  setDraggedItem,
-}: TrelloBarProps) {
+function TrelloBar({ data, draggedItem, setDraggedItem }: TrelloBarProps) {
+  const [cardList, setCardList] = useState<ITrelloItem[]>(data.items);
   const [createModal, setCreateModal] = useState(false);
-  const [cardTitle, setCardTitle] = useState("");
+  const [cardTitle] = useState("");
+  const [cardDiscription] = useState("");
 
   const barItemsRef = useRef<HTMLUListElement | null>(null);
   const cardTitleRef = useRef<any>(null);
+  const cardDiscriptionRef = useRef<any>(null);
 
   const onDrop = (e: any) => {
     console.log(e);
-    const orgIndex = (items as any[]).findIndex(
-      (item) => item.id === draggedItem.id
-    );
+    const orgIndex = cardList.findIndex((item) => item.id === draggedItem.id);
     const closestLi: HTMLLIElement = (e.target as HTMLElement).closest(
       "li"
     ) as HTMLLIElement;
     const dropIndex = getDropIndex(closestLi);
     console.log("orgIndex", orgIndex);
     console.log("dropIndex", dropIndex);
-    const newArray = [...items];
+    const newArray = [...cardList];
     orgIndex >= 0 && newArray.splice(orgIndex, 1);
     if (orgIndex >= 0) {
       newArray.splice(dropIndex, 0, draggedItem);
     } else {
     }
-    setBarItems(newArray);
   };
 
   const getDropIndex = (dropAtItem: HTMLLIElement) => {
@@ -60,14 +52,27 @@ function TrelloBar({
     return lastDropIndex;
   };
 
-  const onSubmitHandler = () => {};
+  const onSubmitHandler = () => {
+    const newCard: ITrelloItem = {
+      id: getLastestItemID(cardList),
+      header: cardTitleRef.current.getInputValue(),
+      discription: cardDiscriptionRef.current.getInputValue(),
+    };
+    setCardList([...cardList, newCard]);
+    setCreateModal(false);
+  };
 
+  const getLastestItemID = (list: ITrelloItem[]): string => {
+    if (!list.length) return "1";
+    list.sort((a, b) => parseFloat(a.id) - parseFloat(b.id));
+    return (parseFloat(list[list.length].id) + 1).toString();
+  };
   return (
     <>
       <div className="trello-column">
         <div className="trello-bar">
           <div className="bar-title">
-            {title}
+            {data.title}
             <button className="btn-bar-menu" type="button">
               <span>...</span>
             </button>
@@ -78,8 +83,8 @@ function TrelloBar({
             onDrop={(e) => onDrop(e)}
             onDragOver={(e) => e.preventDefault()}
           >
-            {items &&
-              items.map((item: TrelloItem, index: number) => (
+            {cardList &&
+              cardList.map((item: ITrelloItem, index: number) => (
                 <li key={"bar-item-" + index}>
                   <div
                     className="item-content"
@@ -113,7 +118,7 @@ function TrelloBar({
           setCreateModal(false);
         }}
       >
-        <form id="create-new-card-form" onSubmit={onSubmitHandler}>
+        <form id="create-new-card-form">
           <InputField
             ref={cardTitleRef}
             id="card-title"
@@ -123,29 +128,30 @@ function TrelloBar({
             formId="create-new-card-form"
             required={true}
             validate={Validators.required}
-            onChange={(e) => setCardTitle(e)}
             onError={(e) => {
               console.log(e);
             }}
           />
           <TextAreaField
+            ref={cardDiscriptionRef}
             id="card-discription"
             label="Discription"
             name="cardDiscription"
-            value=""
-            required={true}
+            value={cardDiscription}
+            required={false}
             formId="create-new-card-form"
-            onChange={(e) => {
-              console.log(e);
-            }}
             onError={(e) => {
               console.log(e);
             }}
           />
           <div className="btn-group">
-            <button>Cancel</button>
+            <button type="button" onClick={() => setCreateModal(false)}>
+              Cancel
+            </button>
             <button
-              disabled={cardTitleRef.current && cardTitleRef.current.inValid}
+              type="button"
+              disabled={cardTitleRef.current && cardTitleRef.current.isValid()}
+              onClick={onSubmitHandler}
             >
               Submit
             </button>

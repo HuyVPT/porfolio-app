@@ -4,7 +4,7 @@
   display: flex;
   label {
     flex-basis: 10%;
-    min-width: 100px;
+    min-width: 80px;
     font-size: 14px;
     margin-right: 8px;
     display: inline-block;
@@ -12,14 +12,14 @@
   }
   input {
     flex-basis: 80%;
-    border: unset;
-    outline: 1px solid #222327;
+    border: 1px solid #222327;
     min-width: 120px;
     min-height: 20px;
     border-radius: 0px;
     padding-left: 4px;
+    outline: unset;
     &.invalid {
-      outline-color: red;
+      border-color: red;
       background-color: #ff000010;
     }
   }

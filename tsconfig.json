@@ -2,6 +2,10 @@
   "compilerOptions": {
     // 👇️ set jsx to react-jsx
     "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
 
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],

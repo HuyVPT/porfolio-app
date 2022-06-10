@@ -16,6 +16,7 @@ import {
   faGear,
   faPlus,
   faAsterisk,
+  faXmark
 } from "@fortawesome/free-solid-svg-icons";
 
 const iconsDeclaration = [
@@ -31,6 +32,7 @@ const iconsDeclaration = [
   faGear,
   faPlus,
   faAsterisk,
+  faXmark
 ];
 
 library.add(...iconsDeclaration);

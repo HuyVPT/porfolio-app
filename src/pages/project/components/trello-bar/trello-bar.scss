@@ -109,18 +109,19 @@
   }
 }
 
-.btn-group {
-  display: flex;
-  gap: 4px;
-  padding: 8px 16px;
-  justify-content: flex-end;
-}
-
-button {
-  padding: 2px 8px;
-  background: linear-gradient(#f0f0f0 50%, #b3b3b3);
-  border: 1px solid #222327;
-  &:hover:not(:disabled){
-    background: linear-gradient(#f0f0f0 50%, #939393);
+form {
+  .btn-group {
+    display: flex;
+    gap: 4px;
+    padding: 8px 16px;
+    justify-content: flex-end;
+    button {
+      padding: 2px 8px;
+      background: linear-gradient(#f0f0f0 50%, #b3b3b3);
+      border: 1px solid #222327;
+      &:hover:not(:disabled) {
+        background: linear-gradient(#f0f0f0 50%, #939393);
+      }
+    }
   }
 }
