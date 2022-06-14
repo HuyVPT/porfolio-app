@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import FormError from "@/models/error-message";
 import * as Validators from "@/validators";
 import Icon from "@/components/icon/icon";
@@ -31,9 +25,7 @@ interface TextAreaProps {
 
 function TextAreaField(props: TextAreaProps, ref: any) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [inValid, setInValid] = useState(
-    props.validate && !!props.validate(props.value as string)
-  );
+  const [inValid, setInValid] = useState(props.validate && !!props.validate(props.value as string));
   const [value, setValue] = useState<string>(props.value as string);
 
   useImperativeHandle(ref, () => ({
@@ -45,6 +37,9 @@ function TextAreaField(props: TextAreaProps, ref: any) {
     },
     getInputValue() {
       return value;
+    },
+    reset() {
+      setValue("");
     },
   }));
 
@@ -59,14 +54,15 @@ function TextAreaField(props: TextAreaProps, ref: any) {
     if (!props.height) {
       textAreaEl.style.height = `${props.height}px`;
     }
+    return () => {
+      setValue("");
+    };
   }, [props.resizeAble, props.width, props.height]);
+
   const valueChangeHandler = (controlValue: string) => {
     if (props.validate) {
       const fieldError: FormError | null = props.validate(controlValue);
-      Validators.setErrorState(
-        textAreaRef.current as HTMLElement,
-        !!fieldError
-      );
+      Validators.setErrorState(textAreaRef.current as HTMLElement, !!fieldError);
       setInValid(!!fieldError);
       if (props.onError && fieldError) {
         props.onError(fieldError);

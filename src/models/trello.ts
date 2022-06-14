@@ -1,7 +1,7 @@
 export interface ITrelloItem {
   id: string;
   header: string;
-  discription: string;
+  description: string;
 }
 export interface ITrelloBar {
   id: string;

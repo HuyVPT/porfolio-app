@@ -1,8 +1,8 @@
-import { useRef, useImperativeHandle, forwardRef, useState, useEffect } from 'react';
-import FormError from '@/models/error-message';
-import * as Validators from '@/validators';
-import Icon from '@/components/icon/icon';
-import './input-field.scss';
+import { useRef, useImperativeHandle, forwardRef, useState, useEffect } from "react";
+import FormError from "@/models/error-message";
+import * as Validators from "@/validators";
+import Icon from "@/components/icon/icon";
+import "./input-field.scss";
 
 interface InputProps {
   id: string;
@@ -36,19 +36,11 @@ function InputField(props: InputProps, ref: any) {
       return value;
     },
     reset() {
-      setValue('');
+      setValue("");
     },
   }));
 
-  useEffect(() => {
-    return () => {
-      console.log('temp');
-    };
-  }, []);
-
   const valueChangeHandler = (controlValue: string) => {
-    console.log('controlValue', controlValue);
-
     if (props.validate) {
       const fieldError: FormError | null = props.validate(controlValue);
       Validators.setErrorState(inputFieldRef.current as HTMLElement, !!fieldError);
@@ -62,13 +54,16 @@ function InputField(props: InputProps, ref: any) {
 
   useEffect(() => {
     if (props.validate) {
-      const fieldError: FormError | null = props.validate((props.value || '') as string);
+      const fieldError: FormError | null = props.validate((props.value || "") as string);
       setInValid(!!fieldError);
     }
+    return () => {
+      setValue("");
+    };
   }, [props]);
   return (
     <>
-      <div className={'input-field-container ' + (props.className || '')}>
+      <div className={"input-field-container " + (props.className || "")}>
         {props.label && <label htmlFor={props.id}>{props.label}</label>}
         <input
           ref={inputFieldRef}
@@ -76,10 +71,10 @@ function InputField(props: InputProps, ref: any) {
           name={props.name}
           id={props.id}
           maxLength={props.maxlength}
-          placeholder={props.placeholder || ''}
+          placeholder={props.placeholder || ""}
           value={value}
           readOnly={props.readonly}
-          form={props.formId || ''}
+          form={props.formId || ""}
           onChange={(e) => {
             valueChangeHandler(e.target.value);
           }}
