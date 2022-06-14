@@ -13,8 +13,7 @@ function TrelloGrid() {
   const barTitleRef = useRef<any>(null);
 
   useEffect(() => {
-    const listBar: ITrelloBar[] = JSON.parse(localStorage.getItem('LIST_BAR') || '[]');
-    setListBar(listBar);
+    setListBar(getListBar());
   }, []);
   useEffect(() => {
     barTitleRef.current.reset();
@@ -27,7 +26,7 @@ function TrelloGrid() {
       title: barTitleRef.current.getInputValue(),
       items: [],
     };
-    localStorage.setItem('LIST_BAR', JSON.stringify([...listBar, newBar]));
+    setListBarData([...listBar, newBar]);
     setListBar([...listBar, newBar]);
     setNewBar(false);
   };
@@ -37,7 +36,19 @@ function TrelloGrid() {
     listBar.sort((a, b) => parseFloat(a.id) - parseFloat(b.id));
     return (parseFloat(listBar[listBar.length - 1].id) + 1).toString();
   };
-  const updateBarHanlder = (barId: string, listBar: ITrelloItem[]) => {};
+  const updateBarHanlder = (barId: string, listBarItem: ITrelloItem[]) => {
+    const updateBar = listBar.find((bar) => bar.id === barId);
+    if (!updateBar) return;
+    updateBar.items = listBarItem;
+    setListBarData(listBar);
+  };
+
+  const getListBar = () => {
+    return JSON.parse(localStorage.getItem('LIST_BAR') || '[]');
+  };
+  const setListBarData = (listBar: ITrelloBar[]) => {
+    return localStorage.setItem('LIST_BAR', JSON.stringify([...listBar]));
+  };
   return (
     <>
       <div className="trello-grid-container">
@@ -48,9 +59,7 @@ function TrelloGrid() {
               data={bar}
               draggedItem={draggedItem as ITrelloItem}
               setDraggedItem={(item: ITrelloItem | null) => setDraggedItem(item)}
-              onUpdatedBar={(id: string, items: ITrelloItem[]) => {
-                updateBarHanlder(id, items);
-              }}
+              onUpdatedBar={updateBarHanlder}
             />
           ))}
 

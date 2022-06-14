@@ -13,7 +13,7 @@ interface TrelloBarProps {
   setDraggedItem: (item: ITrelloItem | null) => void;
   onUpdatedBar: (id: string, items: ITrelloItem[]) => void;
 }
-function TrelloBar({ data, draggedItem, setDraggedItem }: TrelloBarProps) {
+function TrelloBar({ data, draggedItem, setDraggedItem, onUpdatedBar }: TrelloBarProps) {
   const [cardList, setCardList] = useState<ITrelloItem[]>(data.items);
   const [createModal, setCreateModal] = useState(false);
   const [cardTitle] = useState('');
@@ -56,14 +56,16 @@ function TrelloBar({ data, draggedItem, setDraggedItem }: TrelloBarProps) {
       header: cardTitleRef.current.getInputValue(),
       discription: cardDiscriptionRef.current.getInputValue(),
     };
-    setCardList([...cardList, newCard]);
+    const newCardList = [...cardList, newCard];
+    setCardList(newCardList);
     setCreateModal(false);
+    onUpdatedBar(data.id, newCardList);
   };
 
   const getLastestItemID = (list: ITrelloItem[]): string => {
     if (!list.length) return '1';
     list.sort((a, b) => parseFloat(a.id) - parseFloat(b.id));
-    return (parseFloat(list[list.length].id) + 1).toString();
+    return (parseFloat(list[list.length - 1].id) + 1).toString();
   };
 
   return (
@@ -86,8 +88,8 @@ function TrelloBar({ data, draggedItem, setDraggedItem }: TrelloBarProps) {
                     onDragStart={() => setDraggedItem(item)}
                     onDragEnd={() => setDraggedItem(null)}
                   >
-                    <div className="item-header">{item.header + item.id}</div>
-                    <div className="item-discription">{item.discription}</div>
+                    <div className="item-header">{item.header}</div>
+                    {item.discription && <div className="item-discription">{item.discription}</div>}
                   </div>
                 </li>
               ))}
