@@ -8,3 +8,8 @@ export interface ITrelloBar {
   title: string;
   items: ITrelloItem[];
 }
+
+export interface IState {
+  listBar: ITrelloBar[],
+  barItems: ITrelloItem[],
+}

@@ -1,68 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
-import Icon from '../../../../components/icon/icon';
-import InputField from '../../../../components/input-field/input-field';
-import { ITrelloBar, ITrelloItem } from '../../../../models/trello';
+import { useContext, useRef, useState } from 'react';
+
+// Component
+import Icon from '@/components/icon/icon';
+import InputField from '@/components/input-field/input-field';
 import TrelloBar from '../trello-bar/trello-bar';
+
+// Context Reducer
+import { TrelloContext } from '@/contexts/TrelloContext';
+import { addBar } from '@/reducers/actions';
+// Models
+import { IState } from '@/models/trello';
+// Style
 import './trello-grid.scss';
 
 function TrelloGrid() {
-  const [listBar, setListBar] = useState<ITrelloBar[]>([]);
+  const { state, dispatch } = useContext<{ state: IState; dispatch: any }>(TrelloContext);
   const [newBar, setNewBar] = useState<boolean>(false);
-  const [draggedItem, setDraggedItem] = useState<ITrelloItem | null>(null);
 
   const barTitleRef = useRef<any>(null);
 
-  useEffect(() => {
-    setListBar(getListBar());
-  }, []);
-  useEffect(() => {
-    barTitleRef.current.reset();
-  }, [newBar]);
-
   const createNewBarHanlder = () => {
-    const listBar: ITrelloBar[] = JSON.parse(localStorage.getItem('LIST_BAR') || '[]');
-    const newBar: ITrelloBar = {
-      id: getLastestBarID(listBar),
-      title: barTitleRef.current.getInputValue(),
-      items: [],
-    };
-    setListBarData([...listBar, newBar]);
-    setListBar([...listBar, newBar]);
+    dispatch(addBar(barTitleRef.current.getInputValue()));
     setNewBar(false);
-  };
-
-  const getLastestBarID = (listBar: ITrelloBar[]): string => {
-    if (!listBar.length) return '1';
-    listBar.sort((a, b) => parseFloat(a.id) - parseFloat(b.id));
-    return (parseFloat(listBar[listBar.length - 1].id) + 1).toString();
-  };
-  const updateBarHanlder = (barId: string, listBarItem: ITrelloItem[]) => {
-    const updateBar = listBar.find((bar) => bar.id === barId);
-    if (!updateBar) return;
-    updateBar.items = listBarItem;
-    setListBarData(listBar);
-  };
-
-  const getListBar = () => {
-    return JSON.parse(localStorage.getItem('LIST_BAR') || '[]');
-  };
-  const setListBarData = (listBar: ITrelloBar[]) => {
-    return localStorage.setItem('LIST_BAR', JSON.stringify([...listBar]));
   };
   return (
     <>
       <div className="trello-grid-container">
-        {listBar &&
-          listBar.map((bar, index) => (
-            <TrelloBar
-              key={`trelloBar${index}`}
-              data={bar}
-              draggedItem={draggedItem as ITrelloItem}
-              setDraggedItem={(item: ITrelloItem | null) => setDraggedItem(item)}
-              onUpdatedBar={updateBarHanlder}
-            />
-          ))}
-
+        {state.listBar && state.listBar.map((bar, index) => <TrelloBar key={`trelloBar${index}`} data={bar} />)}
         <div className="trello-column">
           <div className="new-bar">
             <div

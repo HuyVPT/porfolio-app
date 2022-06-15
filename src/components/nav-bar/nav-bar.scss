@@ -15,8 +15,10 @@
   .nav-bar {
     display: flex;
     width: 350px;
-    .nav-bar-item {
+    li {
       list-style-type: none;
+    }
+    .nav-bar-item {
       width: 70px;
       height: 60px;
       z-index: 2;
@@ -62,7 +64,7 @@
           transition: transform 0.5s;
           transition-delay: 0s;
           &::before {
-            content: "";
+            content: '';
             position: absolute;
             top: 10px;
             left: 0;
@@ -99,7 +101,7 @@
       transform: translateX(var(--indicator-pos));
       transition: transform 0.5s;
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         top: 6px;
         left: -28px;
@@ -109,7 +111,7 @@
         box-shadow: 15px 18px var(--contract-color);
       }
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         top: 6px;
         right: -28px;

@@ -87,7 +87,7 @@ function FitNavBar() {
                                     </Link>
                                 </li>
                             ))}
-                        <div className="indicator"></div>
+                        <li className="indicator"></li>
                     </ul>
                 </div>
             )}

@@ -1,98 +1,99 @@
-import { useRef, useState } from "react";
-import Icon from "../../../../components/icon/icon";
-import InputField from "../../../../components/input-field/input-field";
-import Modal from "../../../../components/modal/modal";
-import TextAreaField from "../../../../components/textarea/text-area";
-import { ITrelloBar, ITrelloItem } from "../../../../models/trello";
-import * as Validators from "../../../../validators";
-import "./trello-bar.scss";
+import { useContext, useRef, useState } from 'react';
+
+// Component
+import Icon from '@/components/icon/icon';
+import InputField from '@/components/input-field/input-field';
+import Modal from '@/components/modal/modal';
+import TextAreaField from '@/components/textarea/text-area';
+import InputFieldHiddenBorder from '@/components/input-field-hidden-border/input-field-hidden-border';
+
+// Models
+import { ITrelloBar, ITrelloItem } from '@/models/trello';
+
+// Validators
+import * as Validators from '@/validators';
+
+// Service
+import { TrelloContext } from '@/contexts/TrelloContext';
+import { getLatestItemIDByBarID } from '@/utils/project-page';
+
+// Style
+import './trello-bar.scss';
+import { editBarItem, putCard } from '@/reducers/actions';
 
 interface TrelloBarProps {
   data: ITrelloBar;
-  draggedItem: ITrelloItem;
-  setDraggedItem: (item: ITrelloItem | null) => void;
-  onUpdatedBar: (id: string, items: ITrelloItem[]) => void;
+  onUpdatedBar?: (id: string, items: ITrelloItem[]) => void;
 }
-function TrelloBar({ data, draggedItem, setDraggedItem, onUpdatedBar }: TrelloBarProps) {
-  const [cardList, setCardList] = useState<ITrelloItem[]>(data.items);
+function TrelloBar({ data }: TrelloBarProps) {
+  const { dispatch } = useContext(TrelloContext);
+  const [barTitle] = useState(data.title);
   const [createModal, setCreateModal] = useState(false);
-  const [cardTitle, setCardTitle] = useState("");
-  const [cardDescription, setCardDescription] = useState("");
+  const [cardTitle, setCardTitle] = useState('');
+  const [cardDescription, setCardDescription] = useState('');
   const [selectedCard, setSelectedCard] = useState<ITrelloItem | null>();
 
   const barItemsRef = useRef<HTMLUListElement | null>(null);
+  const barTitleRef = useRef<any>(null);
   const cardTitleRef = useRef<any>(null);
   const cardDescriptionRef = useRef<any>(null);
 
   const onDrop = (e: any) => {
-    const orgIndex = cardList.findIndex((item) => item.id === draggedItem.id);
-    const closestLi: HTMLLIElement = (e.target as HTMLElement).closest("li") as HTMLLIElement;
-    const dropIndex = getDropIndex(closestLi);
-    const newArray = [...cardList];
-    orgIndex >= 0 && newArray.splice(orgIndex, 1);
-    if (orgIndex >= 0) {
-      newArray.splice(dropIndex, 0, draggedItem);
-    } else {
-    }
+    // const orgIndex = cardList.findIndex((item) => item.id === draggedItem.id);
+    // const closestLi: HTMLLIElement = (e.target as HTMLElement).closest('li') as HTMLLIElement;
+    // const dropIndex = getDropIndex(closestLi);
+    // const newArray = [...cardList];
+    // orgIndex >= 0 && newArray.splice(orgIndex, 1);
+    // if (orgIndex >= 0) {
+    //   // newArray.splice(dropIndex, 0, draggedItem);
+    // } else {
+    // }
   };
 
-  const getDropIndex = (dropAtItem: HTMLLIElement) => {
-    let lastDropIndex: number = -1;
-    if (!dropAtItem) {
-      return lastDropIndex;
-    }
-    (barItemsRef.current as HTMLElement).childNodes.forEach((item, index) => {
-      if (item.contains(dropAtItem)) {
-        lastDropIndex = index;
-      }
-    });
-    return lastDropIndex;
-  };
+  // const getDropIndex = (dropAtItem: HTMLLIElement) => {
+  //   let lastDropIndex: number = -1;
+  //   if (!dropAtItem) {
+  //     return lastDropIndex;
+  //   }
+  //   (barItemsRef.current as HTMLElement).childNodes.forEach((item, index) => {
+  //     if (item.contains(dropAtItem)) {
+  //       lastDropIndex = index;
+  //     }
+  //   });
+  //   return lastDropIndex;
+  // };
 
   const onSubmitHandler = () => {
-    let newCard: ITrelloItem | null = null;
-    let newCardList = [...cardList];
+    let cardItem: ITrelloItem | null = null;
     if (selectedCard) {
-      newCardList = newCardList.map((item) => {
-        return selectedCard.id === item.id
-          ? {
-              ...selectedCard,
-              header: cardTitleRef.current.getInputValue(),
-              description: cardDescriptionRef.current.getInputValue(),
-            }
-          : item;
-      });
-    } else {
-      newCard = {
-        id: getLatestItemID(cardList),
+      cardItem = {
+        ...selectedCard,
         header: cardTitleRef.current.getInputValue(),
         description: cardDescriptionRef.current.getInputValue(),
       };
-      newCardList.push(newCard);
+    } else {
+      cardItem = {
+        id: (getLatestItemIDByBarID(data.id) + 1).toString(),
+        header: cardTitleRef.current.getInputValue(),
+        description: cardDescriptionRef.current.getInputValue(),
+      };
     }
-    setCardList(newCardList);
+    dispatch(putCard({ barID: data.id, dataItem: cardItem }));
     setCreateModal(false);
-    onUpdatedBar(data.id, newCardList);
     resetFormModal();
-  };
-
-  const getLatestItemID = (list: ITrelloItem[]): string => {
-    if (!list.length) return "1";
-    list.sort((a, b) => parseFloat(a.id) - parseFloat(b.id));
-    return (parseFloat(list[list.length - 1].id) + 1).toString();
   };
 
   const doubleClickHandler = (card: ITrelloItem) => {
     setSelectedCard(card);
     setCardTitle(card.header);
-    setCardDescription(card.description || "");
+    setCardDescription(card.description || '');
     setCreateModal(true);
   };
 
   const resetFormModal = () => {
     setSelectedCard(null);
-    setCardTitle("");
-    setCardDescription("");
+    setCardTitle('');
+    setCardDescription('');
   };
 
   return (
@@ -100,20 +101,27 @@ function TrelloBar({ data, draggedItem, setDraggedItem, onUpdatedBar }: TrelloBa
       <div className="trello-column">
         <div className="trello-bar">
           <div className="bar-title">
-            {data.title}
+            <InputFieldHiddenBorder
+              ref={barTitleRef}
+              id="bar-title"
+              className="bar-title-input"
+              name="barTitle"
+              value={barTitle}
+              onChange={(titleValue) => dispatch(editBarItem({ ...data, title: titleValue }))}
+            />
             <button className="btn-bar-menu" type="button">
               <span>...</span>
             </button>
           </div>
           <ul ref={barItemsRef} className="bar-items" onDrop={(e) => onDrop(e)} onDragOver={(e) => e.preventDefault()}>
-            {cardList &&
-              cardList.map((item: ITrelloItem, index: number) => (
-                <li key={"bar-item-" + index}>
+            {data.items &&
+              data.items.map((item: ITrelloItem, index: number) => (
+                <li key={'bar-item-' + index}>
                   <div
                     className="item-content"
                     draggable="true"
-                    onDragStart={() => setDraggedItem(item)}
-                    onDragEnd={() => setDraggedItem(null)}
+                    // onDragStart={() => setDraggedItem(item)}
+                    // onDragEnd={() => setDraggedItem(null)}
                     onDoubleClick={() => doubleClickHandler(item)}
                   >
                     <div className="item-header">{item.header}</div>
@@ -124,7 +132,6 @@ function TrelloBar({ data, draggedItem, setDraggedItem, onUpdatedBar }: TrelloBa
             <li
               className="open-item-container"
               onClick={() => {
-                console.log("setCreateModal(true)");
                 setCreateModal(true);
               }}
             >
@@ -152,9 +159,7 @@ function TrelloBar({ data, draggedItem, setDraggedItem, onUpdatedBar }: TrelloBa
             formId="create-new-card-form"
             required={true}
             validate={Validators.required}
-            onError={(e) => {
-              console.log(e);
-            }}
+            onError={(e) => {}}
           />
           <TextAreaField
             ref={cardDescriptionRef}
@@ -164,9 +169,7 @@ function TrelloBar({ data, draggedItem, setDraggedItem, onUpdatedBar }: TrelloBa
             value={cardDescription}
             required={false}
             formId="create-new-card-form"
-            onError={(e) => {
-              console.log(e);
-            }}
+            onError={(e) => {}}
           />
           <div className="btn-group">
             <button type="button" onClick={() => setCreateModal(false)}>

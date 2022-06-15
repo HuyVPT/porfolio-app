@@ -27,14 +27,11 @@
       font-weight: bold;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
-      padding: 0 16px;
+      padding: 0 16px 0 8px;
       z-index: 2;
       .btn-bar-menu {
         height: 32px;
         width: 32px;
-        position: absolute;
-        top: 6px;
-        right: 8px;
         border-radius: 3px;
         border: transparent;
         background: transparent;
@@ -123,5 +120,13 @@ form {
         background: linear-gradient(#f0f0f0 50%, #939393);
       }
     }
+  }
+}
+
+.bar-title-input {
+  padding: 0;
+  width: 100%;
+  input {
+    padding-left: 8px;
   }
 }
