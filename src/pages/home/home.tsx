@@ -1,4 +1,4 @@
-import "./home.scss";
+import './home.scss';
 
 function Home() {
   return (
@@ -7,6 +7,9 @@ function Home() {
         <span className="welcome-txt">Welcome</span>
         <span className="name-txt">Full Name</span>
         <span className="major-txt">Major</span>
+      </div>
+      <div className="btn-group">
+        <button>View CV</button>
       </div>
     </div>
   );
