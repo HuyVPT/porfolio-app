@@ -78,6 +78,7 @@ function InputFieldHiddenBorder(props: InputProps, ref: any) {
           value={value}
           readOnly={props.readonly}
           form={props.formId || ''}
+          autoComplete="off"
           onChange={(e) => {
             valueChangeHandler(e.target.value);
           }}

@@ -1,10 +1,10 @@
 import { IState, ITrelloBar } from "@/models/trello";
-import { getLatestBarID, getListBar, putBar, putCardItem } from "@/utils/project-page";
-import { ADD_BAR, EDIT_BAR_ITEM, PUT_CARD, SET_LIST_BAR } from "./constants";
+import * as Service from "@/utils/project-page";
+import { ADD_BAR, DELETE_CARD_BY_BARID, EDIT_BAR_ITEM, PUT_CARD, SET_LIST_BAR, SET_LIST_CARD } from "./constants";
 
 
 export const initialState: IState = {
-  listBar: getListBar(),
+  listBar: Service.getListBar(),
   barItems: [],
 }
 
@@ -20,20 +20,30 @@ const TrelloReducer = (prevState: IState, action: { type: string, payload: any }
     case ADD_BAR: {
       const barTitle: string = payload;
       const newBar: ITrelloBar = {
-        id: (getLatestBarID() + 1).toString(),
+        id: (Service.getLatestBarID() + 1).toString(),
         title: barTitle,
         items: []
       }
-      const result = putBar(newBar)
+      const result = Service.putBar(newBar)
       return { ...prevState, listBar: result };
     }
 
     case EDIT_BAR_ITEM:
-      const result = putBar(payload)
+      const result = Service.putBar(payload)
       return { ...prevState, listBar: result };
 
     case PUT_CARD: {
-      const result = putCardItem(payload.barID, payload.dataItem)
+      const result = Service.putCardItem(payload.barID, payload.dataItem)
+      return { ...prevState, listBar: result };
+    }
+
+    case SET_LIST_CARD: {
+      const result = Service.setBarItemsByBarID(payload.barID, payload.dataItems)
+      return { ...prevState, listBar: result };
+    }
+
+    case DELETE_CARD_BY_BARID: {
+      const result = Service.deleteCardByBarID(payload.barID, payload.cardID)
       return { ...prevState, listBar: result };
     }
 

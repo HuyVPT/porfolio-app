@@ -8,7 +8,7 @@ import TextAreaField from '@/components/textarea/text-area';
 import InputFieldHiddenBorder from '@/components/input-field-hidden-border/input-field-hidden-border';
 
 // Models
-import { ITrelloBar, ITrelloItem } from '@/models/trello';
+import { IDraggedItem, ITrelloBar, ITrelloItem } from '@/models/trello';
 
 // Validators
 import * as Validators from '@/validators';
@@ -19,13 +19,14 @@ import { getLatestItemIDByBarID } from '@/utils/project-page';
 
 // Style
 import './trello-bar.scss';
-import { editBarItem, putCard } from '@/reducers/actions';
+import { deleteCardByBarID, editBarItem, putCard, setListCard } from '@/reducers/actions';
 
 interface TrelloBarProps {
   data: ITrelloBar;
-  onUpdatedBar?: (id: string, items: ITrelloItem[]) => void;
+  draggedItem: IDraggedItem | null;
+  setDraggedItem: (item: IDraggedItem | null) => void;
 }
-function TrelloBar({ data }: TrelloBarProps) {
+function TrelloBar({ data, draggedItem, setDraggedItem }: TrelloBarProps) {
   const { dispatch } = useContext(TrelloContext);
   const [barTitle] = useState(data.title);
   const [createModal, setCreateModal] = useState(false);
@@ -38,30 +39,31 @@ function TrelloBar({ data }: TrelloBarProps) {
   const cardTitleRef = useRef<any>(null);
   const cardDescriptionRef = useRef<any>(null);
 
-  const onDrop = (e: any) => {
-    // const orgIndex = cardList.findIndex((item) => item.id === draggedItem.id);
-    // const closestLi: HTMLLIElement = (e.target as HTMLElement).closest('li') as HTMLLIElement;
-    // const dropIndex = getDropIndex(closestLi);
-    // const newArray = [...cardList];
-    // orgIndex >= 0 && newArray.splice(orgIndex, 1);
-    // if (orgIndex >= 0) {
-    //   // newArray.splice(dropIndex, 0, draggedItem);
-    // } else {
-    // }
+  const onDrop = (e: any, barID: string) => {
+    if (!draggedItem) return;
+    console.log('draggedItem.barID', draggedItem.barID);
+    console.log('barID', barID);
+    const dropIndex = getDropIndex(e.target as HTMLElement);
+    if (draggedItem.barID === barID) {
+      dragOnSameBar(dropIndex);
+    } else {
+      dragToOtherBar(barID, dropIndex);
+    }
   };
 
-  // const getDropIndex = (dropAtItem: HTMLLIElement) => {
-  //   let lastDropIndex: number = -1;
-  //   if (!dropAtItem) {
-  //     return lastDropIndex;
-  //   }
-  //   (barItemsRef.current as HTMLElement).childNodes.forEach((item, index) => {
-  //     if (item.contains(dropAtItem)) {
-  //       lastDropIndex = index;
-  //     }
-  //   });
-  //   return lastDropIndex;
-  // };
+  const getDropIndex = (dropAtItem: HTMLElement) => {
+    let lastDropIndex: number = -1;
+    const closestLi: HTMLLIElement = dropAtItem.closest('li') as HTMLLIElement;
+    if (!closestLi) {
+      return lastDropIndex;
+    }
+    (barItemsRef.current as HTMLElement).childNodes.forEach((item, index) => {
+      if (item.contains(closestLi)) {
+        lastDropIndex = index;
+      }
+    });
+    return lastDropIndex;
+  };
 
   const onSubmitHandler = () => {
     let cardItem: ITrelloItem | null = null;
@@ -74,6 +76,7 @@ function TrelloBar({ data }: TrelloBarProps) {
     } else {
       cardItem = {
         id: (getLatestItemIDByBarID(data.id) + 1).toString(),
+        barID: data.id,
         header: cardTitleRef.current.getInputValue(),
         description: cardDescriptionRef.current.getInputValue(),
       };
@@ -81,6 +84,38 @@ function TrelloBar({ data }: TrelloBarProps) {
     dispatch(putCard({ barID: data.id, dataItem: cardItem }));
     setCreateModal(false);
     resetFormModal();
+  };
+
+  const dragOnSameBar = (dropIndex: number) => {
+    if (!draggedItem) return;
+    const newArray: ITrelloItem[] = [...data.items];
+    const orgIndex = data.items.findIndex((item) => item.id === draggedItem.data.id);
+    if (orgIndex === dropIndex) return;
+    newArray.splice(orgIndex, 1);
+    if (orgIndex > dropIndex) {
+      newArray.splice(dropIndex, 0, draggedItem.data);
+    } else if (orgIndex < dropIndex) {
+      if (dropIndex === 0) {
+        newArray.unshift(draggedItem.data);
+      } else {
+        newArray.splice(dropIndex, 0, draggedItem.data);
+      }
+    }
+
+    dispatch(setListCard({ barID: draggedItem.barID, dataItems: newArray }));
+  };
+
+  const dragToOtherBar = (otherBarID: string, dropIndex: number) => {
+    if (!draggedItem) return;
+    const draggedItemBarID: string = draggedItem.barID;
+    if (!data.items.length) {
+      dispatch(setListCard({ barID: otherBarID, dataItems: [draggedItem.data] }));
+    } else {
+      const newArray: ITrelloItem[] = [...data.items];
+      newArray.splice(dropIndex, 0, draggedItem.data);
+      dispatch(setListCard({ barID: otherBarID, dataItems: newArray }));
+    }
+    dispatch(deleteCardByBarID({ barID: draggedItemBarID, cardID: draggedItem.data.id }));
   };
 
   const doubleClickHandler = (card: ITrelloItem) => {
@@ -113,15 +148,22 @@ function TrelloBar({ data }: TrelloBarProps) {
               <span>...</span>
             </button>
           </div>
-          <ul ref={barItemsRef} className="bar-items" onDrop={(e) => onDrop(e)} onDragOver={(e) => e.preventDefault()}>
+          <ul
+            ref={barItemsRef}
+            className="bar-items"
+            onDrop={(e) => onDrop(e, data.id)}
+            onDragOver={(e) => e.preventDefault()}
+          >
             {data.items &&
               data.items.map((item: ITrelloItem, index: number) => (
                 <li key={'bar-item-' + index}>
                   <div
                     className="item-content"
                     draggable="true"
-                    // onDragStart={() => setDraggedItem(item)}
-                    // onDragEnd={() => setDraggedItem(null)}
+                    onDragStart={(e) => {
+                      setDraggedItem({ barID: data.id, el: e.currentTarget, data: item });
+                    }}
+                    onDragEnd={() => setDraggedItem(null)}
                     onDoubleClick={() => doubleClickHandler(item)}
                   >
                     <div className="item-header">{item.header}</div>

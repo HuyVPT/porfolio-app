@@ -67,3 +67,19 @@ export const putCardItem = (barID: string, card: ITrelloItem): ITrelloBar[] => {
   const result = putBar({ ...bar, items: [...barCards] });
   return [...result];
 };
+
+export const setBarItemsByBarID = (barID: string, cards: ITrelloItem[]): ITrelloBar[] => {
+  let bar: ITrelloBar = getBarByID(barID) as ITrelloBar;
+  if (!bar) throw new Error("Bar is not exist!");
+  let barCards: ITrelloItem[] = cards;
+  const result = putBar({ ...bar, items: [...barCards] });
+  return [...result];
+};
+
+export const deleteCardByBarID = (barID: string, cardID: string): ITrelloBar[] => {
+  let bar: ITrelloBar = getBarByID(barID) as ITrelloBar;
+  if (!bar) throw new Error("Bar is not exist!");
+  const barCards = bar.items.filter(card => card.id !== cardID)
+  const result = putBar({ ...bar, items: [...barCards] });
+  return [...result];
+};

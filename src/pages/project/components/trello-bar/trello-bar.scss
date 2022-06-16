@@ -77,6 +77,13 @@
           }
         }
       }
+      #placeholder-drag{
+        display: inline-block;
+        width: 100%;
+        background-color: #d3d3d3;
+        border-radius: 3px;
+        box-shadow: inset 0px 0px 6px 0 #666;
+      }
       .item-content {
         height: 100%;
         background-color: #fdfdfd;
@@ -92,14 +99,14 @@
           font-weight: bold;
           position: relative;
         }
-        .item-discription {
+        .item-description {
           margin-top: 8px;
           overflow: hidden;
           text-overflow: ellipsis;
+          white-space: break-spaces;
           display: -webkit-box !important;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
-          white-space: normal;
         }
       }
     }

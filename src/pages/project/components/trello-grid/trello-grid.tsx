@@ -9,13 +9,14 @@ import TrelloBar from '../trello-bar/trello-bar';
 import { TrelloContext } from '@/contexts/TrelloContext';
 import { addBar } from '@/reducers/actions';
 // Models
-import { IState } from '@/models/trello';
+import { IState, ITrelloItem } from '@/models/trello';
 // Style
 import './trello-grid.scss';
 
 function TrelloGrid() {
   const { state, dispatch } = useContext<{ state: IState; dispatch: any }>(TrelloContext);
   const [newBar, setNewBar] = useState<boolean>(false);
+  const [draggedItem, setDraggedItem] = useState<{ barID: string; data: ITrelloItem; el: HTMLDivElement } | null>(null);
 
   const barTitleRef = useRef<any>(null);
 
@@ -26,7 +27,15 @@ function TrelloGrid() {
   return (
     <>
       <div className="trello-grid-container">
-        {state.listBar && state.listBar.map((bar, index) => <TrelloBar key={`trelloBar${index}`} data={bar} />)}
+        {state.listBar &&
+          state.listBar.map((bar, index) => (
+            <TrelloBar
+              key={`trelloBar${index}`}
+              data={bar}
+              draggedItem={draggedItem}
+              setDraggedItem={(e) => setDraggedItem(e)}
+            />
+          ))}
         <div className="trello-column">
           <div className="new-bar">
             <div
