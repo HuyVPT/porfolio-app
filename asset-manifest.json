@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/huyvpt-portfolio/static/css/main.d0159887.css",
-    "main.js": "/huyvpt-portfolio/static/js/main.7fd5b03b.js",
-    "static/js/787.28cb0dcd.chunk.js": "/huyvpt-portfolio/static/js/787.28cb0dcd.chunk.js",
-    "index.html": "/huyvpt-portfolio/index.html",
-    "main.d0159887.css.map": "/huyvpt-portfolio/static/css/main.d0159887.css.map",
-    "main.7fd5b03b.js.map": "/huyvpt-portfolio/static/js/main.7fd5b03b.js.map",
-    "787.28cb0dcd.chunk.js.map": "/huyvpt-portfolio/static/js/787.28cb0dcd.chunk.js.map"
+    "main.css": "/porfolio-app/static/css/main.d0159887.css",
+    "main.js": "/porfolio-app/static/js/main.f6691cee.js",
+    "static/js/787.28cb0dcd.chunk.js": "/porfolio-app/static/js/787.28cb0dcd.chunk.js",
+    "index.html": "/porfolio-app/index.html",
+    "main.d0159887.css.map": "/porfolio-app/static/css/main.d0159887.css.map",
+    "main.f6691cee.js.map": "/porfolio-app/static/js/main.f6691cee.js.map",
+    "787.28cb0dcd.chunk.js.map": "/porfolio-app/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d0159887.css",
-    "static/js/main.7fd5b03b.js"
+    "static/js/main.f6691cee.js"
   ]
 }
